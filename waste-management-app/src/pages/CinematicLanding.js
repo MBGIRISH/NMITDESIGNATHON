@@ -129,27 +129,48 @@ const CinematicLanding = () => {
               </Typography>
 
               {/* Glass CTA */}
-              <HoverSound>
-              <Button data-reveal onClick={() => document.querySelector('#get-started')?.scrollIntoView({ behavior: 'smooth' })} variant="contained" sx={{
-                mt: 5,
-                px: 4,
-                py: 1.5,
-                borderRadius: 3,
-                fontWeight: 'bold',
-                backdropFilter: 'blur(12px)',
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))',
-                border: '1px solid rgba(255,255,255,0.25)',
-                color: 'white',
-                boxShadow: '0 20px 60px rgba(102,126,234,0.35), inset 0 0 20px rgba(255,255,255,0.08)',
-                textTransform: 'none',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
-                  transform: 'translateY(-2px)'
-                }
-              }}>
-                Get Started
-              </Button>
-              </HoverSound>
+              <Box data-reveal sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 5 }}>
+                <HoverSound>
+                  <Button onClick={() => navigate('/login')} variant="contained" sx={{
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 3,
+                    fontWeight: 'bold',
+                    backdropFilter: 'blur(12px)',
+                    background: 'linear-gradient(135deg, rgba(102,126,234,0.8), rgba(118,75,162,0.8))',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    color: 'white',
+                    boxShadow: '0 20px 60px rgba(102,126,234,0.35), inset 0 0 20px rgba(255,255,255,0.08)',
+                    textTransform: 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, rgba(102,126,234,1), rgba(118,75,162,1))',
+                      transform: 'translateY(-2px)'
+                    }
+                  }}>
+                    Sign In
+                  </Button>
+                </HoverSound>
+                <HoverSound>
+                  <Button onClick={() => navigate('/signup')} variant="outlined" sx={{
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 3,
+                    fontWeight: 'bold',
+                    backdropFilter: 'blur(12px)',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    color: 'white',
+                    boxShadow: '0 20px 60px rgba(102,126,234,0.2), inset 0 0 20px rgba(255,255,255,0.05)',
+                    textTransform: 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
+                      transform: 'translateY(-2px)'
+                    }
+                  }}>
+                    Sign Up
+                  </Button>
+                </HoverSound>
+              </Box>
             </Box>
           </Box>
         </Container>
@@ -181,30 +202,6 @@ const CinematicLanding = () => {
             </Box>
           </Container>
         ))}
-        {/* Target section for CTA */}
-        <Container id="get-started" maxWidth="lg" sx={{ py: { xs: 12, md: 16 } }}>
-          <Box sx={{
-            background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 4,
-            p: { xs: 3, md: 6 },
-            textAlign: 'center',
-            boxShadow: '0 30px 90px rgba(0,0,0,0.5)'
-          }}>
-            <Typography variant="h3" sx={{ fontFamily: 'Space Grotesk, Inter, system-ui, sans-serif', mb: 2 }}>
-              Ready to Create?
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'rgba(220,230,255,0.85)', maxWidth: 720, mx: 'auto', mb: 3 }}>
-              Sign up to start composing cinematic AI scenes. Your story begins here.
-            </Typography>
-            <Button onClick={() => navigate('/signup')} variant="contained" sx={{
-              px: 4, py: 1.5, borderRadius: 3, textTransform: 'none',
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              boxShadow: '0 20px 60px rgba(118,75,162,0.35)',
-              '&:hover': { transform: 'translateY(-2px)' }
-            }}>Create your account</Button>
-          </Box>
-        </Container>
       </Box>
 
       {/* Footer */}
