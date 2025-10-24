@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../firebase';
 import { 
   Box, 
@@ -22,7 +22,9 @@ import {
   IconButton
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import LocationPicker from '../components/LocationPicker';
+import HoverSound from '../components/HoverSound';
 
 const AdminPanel = () => {
   const [dustbins, setDustbins] = useState([]);
@@ -136,6 +138,17 @@ const AdminPanel = () => {
     setOpen(true);
   };
 
+  const handleDelete = async (dustbinId) => {
+    if (window.confirm('Are you sure you want to delete this dustbin? This action cannot be undone.')) {
+      try {
+        await deleteDoc(doc(db, 'dustbins', dustbinId));
+        // Success feedback can be added here if needed
+      } catch (err) {
+        console.error('Error deleting dustbin:', err);
+        setError('Failed to delete dustbin. Please try again.');
+      }
+    }
+  };
 
   const handleAddLocation = (dustbinId) => {
     const dustbin = dustbins.find(d => d.id === dustbinId);
@@ -190,30 +203,45 @@ const AdminPanel = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, position: 'relative' }}>
+      {/* Neon background effects - Green theme */}
+      <Box sx={{ position: 'fixed', inset: 0, opacity: 0.3, pointerEvents: 'none', zIndex: 0 }}>
+        <Box sx={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle 600px at 20% 30%, rgba(81,207,102,0.18), transparent), radial-gradient(circle 500px at 80% 70%, rgba(46,125,50,0.15), transparent)'
+        }} />
+      </Box>
+
       {/* Header Section */}
       <Box sx={{ 
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
+        background: 'linear-gradient(135deg, rgba(245, 250, 240, 0.95), rgba(255, 255, 255, 0.92))',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        border: '2px solid rgba(81, 207, 102, 0.3)',
+        borderRadius: 3,
         p: 4,
-        borderBottom: '1px solid rgba(255, 255, 255, 0.2)'
+        mb: 3,
+        boxShadow: '0 10px 40px rgba(81, 207, 102, 0.15), inset 0 0 60px rgba(129, 199, 132, 0.05)',
+        position: 'relative',
+        zIndex: 1
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box>
             <Typography variant="h3" sx={{ 
               fontWeight: 'bold',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               mb: 1
             }}>
-              🗑️ Dustbin Management
+              ♻️ Dustbin Management
             </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Monitor and manage waste collection points
+            <Typography variant="h6" sx={{ color: '#388e3c', fontWeight: 500 }}>
+              🌱 Monitor and manage waste collection points
             </Typography>
           </Box>
+          <HoverSound>
           <Button 
             variant="contained" 
             onClick={handleOpen}
@@ -222,11 +250,11 @@ const AdminPanel = () => {
               borderRadius: 3,
               px: 4,
               py: 1.5,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)',
+              background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)',
+              boxShadow: '0 8px 25px rgba(46, 125, 50, 0.35)',
               '&:hover': {
-                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                boxShadow: '0 12px 35px rgba(102, 126, 234, 0.4)',
+                background: 'linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%)',
+                boxShadow: '0 12px 35px rgba(46, 125, 50, 0.5)',
                 transform: 'translateY(-2px)'
               },
               transition: 'all 0.3s ease'
@@ -234,6 +262,7 @@ const AdminPanel = () => {
           >
             ➕ Add New Dustbin
           </Button>
+          </HoverSound>
         </Box>
 
         {error && (
@@ -271,20 +300,21 @@ const AdminPanel = () => {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ p: 4 }}>
+      <Box sx={{ p: 4, position: 'relative', zIndex: 1 }}>
         <TableContainer 
           component={Paper} 
           sx={{ 
             borderRadius: 3,
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 20px 60px rgba(81, 207, 102, 0.15), 0 10px 30px rgba(0, 0, 0, 0.1)',
             overflow: 'hidden',
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(10px)'
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92))',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            border: '1px solid rgba(81, 207, 102, 0.2)'
           }}
         >
         <Table>
           <TableHead sx={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)'
           }}>
             <TableRow>
               <TableCell sx={{ color: 'white', fontWeight: 'bold', fontSize: '1rem' }}>📝 Name</TableCell>
@@ -300,15 +330,18 @@ const AdminPanel = () => {
               <TableRow 
                 key={dustbin.id}
                 sx={{ 
+                  cursor: 'pointer',
                   '&:nth-of-type(odd)': { 
                     backgroundColor: 'rgba(102, 126, 234, 0.05)' 
                   },
                   '&:hover': { 
                     backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    transform: 'scale(1.01)',
-                    transition: 'all 0.2s ease'
+                    transform: 'translateY(-4px) scale(1.03)',
+                    boxShadow: '0 12px 35px rgba(102, 126, 234, 0.25), 0 8px 15px rgba(0, 0, 0, 0.15)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                   },
-                  borderLeft: `4px solid ${dustbin.currentFill >= dustbin.threshold ? '#ff6b6b' : '#51cf66'}`
+                  borderLeft: `4px solid ${dustbin.currentFill >= dustbin.threshold ? '#ff6b6b' : '#51cf66'}`,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
                 <TableCell sx={{ fontWeight: 600, fontSize: '1rem' }}>
@@ -413,25 +446,46 @@ const AdminPanel = () => {
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <IconButton 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(dustbin);
-                    }} 
-                    sx={{
-                      color: '#667eea',
-                      backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                      borderRadius: 2,
-                      '&:hover': {
-                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                        transform: 'scale(1.1)'
-                      },
-                      transition: 'all 0.2s ease'
-                    }}
-                    title="Edit Dustbin"
-                  >
-                    <EditIcon />
-                  </IconButton>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <IconButton 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(dustbin);
+                      }} 
+                      sx={{
+                        color: '#2e7d32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                        borderRadius: 2,
+                        '&:hover': {
+                          backgroundColor: 'rgba(46, 125, 50, 0.2)',
+                          transform: 'scale(1.1)'
+                        },
+                        transition: 'all 0.2s ease'
+                      }}
+                      title="Edit Dustbin"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(dustbin.id);
+                      }} 
+                      sx={{
+                        color: '#d32f2f',
+                        backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                        borderRadius: 2,
+                        '&:hover': {
+                          backgroundColor: 'rgba(211, 47, 47, 0.2)',
+                          transform: 'scale(1.1)'
+                        },
+                        transition: 'all 0.2s ease'
+                      }}
+                      title="Delete Dustbin"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}
@@ -444,7 +498,7 @@ const AdminPanel = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle 
           sx={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)',
             color: 'white',
             textAlign: 'center',
             py: 3
@@ -514,14 +568,14 @@ const AdminPanel = () => {
                     min={0}
                     max={100}
                     sx={{ 
-                      color: '#667eea',
+                      color: '#2e7d32',
                       '& .MuiSlider-thumb': {
-                        backgroundColor: '#667eea',
+                        backgroundColor: '#2e7d32',
                         border: '3px solid white',
-                        boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
+                        boxShadow: '0 2px 8px rgba(46, 125, 50, 0.3)'
                       },
                       '& .MuiSlider-track': {
-                        backgroundColor: '#667eea'
+                        backgroundColor: '#2e7d32'
                       },
                       '& .MuiSlider-rail': {
                         backgroundColor: '#e9ecef'
@@ -557,11 +611,11 @@ const AdminPanel = () => {
                 borderRadius: 2,
                 px: 4,
                 py: 1,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+                background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)',
+                boxShadow: '0 4px 15px rgba(46, 125, 50, 0.35)',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-                  boxShadow: '0 6px 20px rgba(102, 126, 234, 0.4)'
+                  background: 'linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%)',
+                  boxShadow: '0 6px 20px rgba(46, 125, 50, 0.5)'
                 }
               }}
             >

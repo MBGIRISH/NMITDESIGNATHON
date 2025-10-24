@@ -16,6 +16,7 @@ import {
   Button
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HoverSound from '../components/HoverSound';
 
 const CollectorPanel = () => {
   const [dustbins, setDustbins] = useState([]);
@@ -103,28 +104,42 @@ const CollectorPanel = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, position: 'relative' }}>
+      {/* Neon background effects */}
+      <Box sx={{ position: 'fixed', inset: 0, opacity: 0.3, pointerEvents: 'none', zIndex: 0 }}>
+        <Box sx={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle 600px at 30% 20%, rgba(81,207,102,0.15), transparent), radial-gradient(circle 500px at 70% 80%, rgba(102,126,234,0.12), transparent)'
+        }} />
+      </Box>
+
       {/* Header Section */}
       <Box sx={{ 
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
+        background: 'linear-gradient(135deg, rgba(245, 250, 240, 0.95), rgba(255, 255, 255, 0.92))',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        border: '2px solid rgba(81, 207, 102, 0.3)',
+        borderRadius: 3,
         p: 4,
-        borderBottom: '1px solid rgba(255, 255, 255, 0.2)'
+        mb: 3,
+        boxShadow: '0 10px 40px rgba(81, 207, 102, 0.15), inset 0 0 60px rgba(129, 199, 132, 0.05)',
+        position: 'relative',
+        zIndex: 1
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box>
             <Typography variant="h3" sx={{ 
               fontWeight: 'bold',
-              background: 'linear-gradient(135deg, #51cf66 0%, #40c057 100%)',
+              background: 'linear-gradient(135deg, #2e7d32 0%, #388e3c 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               mb: 1
             }}>
-              🚛 Collection Dashboard
+              ♻️ Collection Dashboard
             </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Monitor dustbin levels and update collection status
+            <Typography variant="h6" sx={{ color: '#388e3c', fontWeight: 500 }}>
+              🌱 Monitor dustbin levels and update collection status
             </Typography>
           </Box>
         </Box>
@@ -137,14 +152,15 @@ const CollectorPanel = () => {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ p: 4 }}>
+      <Box sx={{ p: 4, position: 'relative', zIndex: 1 }}>
         <Paper sx={{ 
           p: 3, 
           mb: 4,
           borderRadius: 3,
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)'
+          boxShadow: '0 20px 60px rgba(81, 207, 102, 0.15), 0 10px 30px rgba(0, 0, 0, 0.1)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92))',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          border: '1px solid rgba(81, 207, 102, 0.1)'
         }}>
           <Typography variant="h5" sx={{ 
             fontWeight: 'bold',
@@ -161,19 +177,21 @@ const CollectorPanel = () => {
           </Typography>
 
           {/* Dustbin Grid */}
-          <Grid container spacing={3}>
+          <Grid container spacing={3} alignItems="stretch">
             {dustbins.map((dustbin) => (
               <Grid item xs={12} sm={6} md={4} key={dustbin.id}>
                 <Card 
                   sx={{ 
                     cursor: 'pointer',
-                    transition: 'all 0.3s ease',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     borderRadius: 3,
                     boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
                     border: selectedDustbin?.id === dustbin.id ? '2px solid #51cf66' : '2px solid transparent',
+                    height: '100%',
                     '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)'
+                      transform: 'translateY(-4px) scale(1.03)',
+                      boxShadow: '0 12px 35px rgba(81, 207, 102, 0.25), 0 8px 20px rgba(0, 0, 0, 0.2)',
+                      border: '2px solid rgba(81, 207, 102, 0.4)'
                     }
                   }}
                   onClick={() => setSelectedDustbin(dustbin)}
@@ -211,7 +229,7 @@ const CollectorPanel = () => {
                           borderRadius: 4,
                           backgroundColor: '#e9ecef',
                           '& .MuiLinearProgress-bar': {
-                            backgroundColor: dustbin.currentFill >= dustbin.threshold ? '#ff6b6b' : '#51cf66',
+                            backgroundColor: dustbin.currentFill >= dustbin.threshold ? '#d32f2f' : '#2e7d32',
                             borderRadius: 4
                           }
                         }}
@@ -223,6 +241,7 @@ const CollectorPanel = () => {
                     </Typography>
 
                     {dustbin.location && (dustbin.location.address || dustbin.location.googleMapsLink || dustbin.location.mapsLink) ? (
+                      <HoverSound>
                       <Button
                         variant="outlined"
                         size="small"
@@ -242,16 +261,18 @@ const CollectorPanel = () => {
                         sx={{ 
                           textTransform: 'none',
                           borderRadius: 2,
-                          borderColor: '#51cf66',
-                          color: '#51cf66',
+                          borderColor: '#2e7d32',
+                          color: '#2e7d32',
+                          fontWeight: 600,
                           '&:hover': {
-                            borderColor: '#40c057',
-                            backgroundColor: 'rgba(81, 207, 102, 0.1)'
+                            borderColor: '#1b5e20',
+                            backgroundColor: 'rgba(46, 125, 50, 0.15)'
                           }
                         }}
                       >
                         View Location
                       </Button>
+                      </HoverSound>
                     ) : (
                       <Button
                         variant="outlined"
@@ -281,9 +302,10 @@ const CollectorPanel = () => {
         <Paper sx={{ 
           p: 3,
           borderRadius: 3,
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)'
+          boxShadow: '0 20px 60px rgba(81, 207, 102, 0.15), 0 10px 30px rgba(0, 0, 0, 0.1)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.92))',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          border: '1px solid rgba(81, 207, 102, 0.1)'
         }}>
           <Typography variant="h5" sx={{ 
             fontWeight: 'bold',
